@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { getTMDBImageUrl, getGenreNames, type TMDBItem } from '@/lib/tmdb.client';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
-import { processImageUrl, processVideoUrl } from '@/lib/utils';
 
 interface BannerCarouselProps {
   autoPlayInterval?: number; // 自动播放间隔（毫秒）
@@ -51,9 +50,9 @@ export default function BannerCarousel({ autoPlayInterval = 5000 }: BannerCarous
     if (!path) return '';
     // 如果是完整URL（TX数据源或豆瓣），需要判断是否需要代理
     if (path.startsWith('http://') || path.startsWith('https://')) {
-      // 豆瓣图片需要通过代理
+      // 豆瓣图片直接使用服务器代理
       if (path.includes('doubanio.com')) {
-        return processImageUrl(path);
+        return `/api/image-proxy?url=${encodeURIComponent(path)}`;
       }
       // TX等其他完整URL直接返回
       return path;
@@ -65,9 +64,9 @@ export default function BannerCarousel({ autoPlayInterval = 5000 }: BannerCarous
   // 获取视频URL（处理豆瓣视频代理）
   const getVideoUrl = (url: string | null) => {
     if (!url) return null;
-    // 豆瓣视频需要通过域名替换代理
+    // 豆瓣视频直接使用服务器代理
     if (url.includes('doubanio.com')) {
-      return processVideoUrl(url);
+      return `/api/video-proxy?url=${encodeURIComponent(url)}`;
     }
     return url;
   };
