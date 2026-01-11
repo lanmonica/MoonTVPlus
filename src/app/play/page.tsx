@@ -2577,7 +2577,7 @@ function PlayPageClient() {
         setLoadingStage('preferring');
         setLoadingMessage('⚡ 正在优选最佳播放源...');
 
-        // 过滤掉 openlist 和所有 emby 源，它们不参与测速
+        // 过滤掉 openlist、所有 emby 源和 xiaoya 源，它们不参与测速
         const sourcesToTest = sourcesInfo.filter(s => {
           // 检查是否为 openlist
           if (s.source === 'openlist') return false;
@@ -2585,19 +2585,23 @@ function PlayPageClient() {
           // 检查是否为 emby 源（包括 emby 和 emby_xxx 格式）
           if (s.source === 'emby' || s.source.startsWith('emby_')) return false;
 
+          // 检查是否为 xiaoya 源
+          if (s.source === 'xiaoya') return false;
+
           return true;
         });
 
         const excludedSources = sourcesInfo.filter(s =>
           s.source === 'openlist' ||
           s.source === 'emby' ||
-          s.source.startsWith('emby_')
+          s.source.startsWith('emby_') ||
+          s.source === 'xiaoya'
         );
 
         if (sourcesToTest.length > 0) {
           detailData = await preferBestSource(sourcesToTest);
         } else if (excludedSources.length > 0) {
-          // 如果只有 openlist/emby 源，直接使用第一个
+          // 如果只有 openlist/emby/xiaoya 源，直接使用第一个
           detailData = excludedSources[0];
         } else {
           detailData = sourcesInfo[0];

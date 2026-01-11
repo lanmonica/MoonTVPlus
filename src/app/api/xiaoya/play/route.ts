@@ -128,17 +128,17 @@ export async function GET(request: NextRequest) {
       const qualityOrder: Record<string, number> = {
         'FHD': 1,
         'HD': 2,
-        'SD': 3,
-        'LD': 4,
+        'LD': 3,
+		'SD': 4,
       };
 
       const qualities = taskList
-        .filter((task: any) => task.status === 'finished')
+	    .filter((task: any) => task.status === 'finished')
         .map((task: any) => ({
           name: task.template_id,
           url: task.url,
         }))
-        .sort((a, b) => (qualityOrder[a.name] || 999) - (qualityOrder[b.name] || 999));
+        .sort((a: any, b: any) => (qualityOrder[a.name] || 999) - (qualityOrder[b.name] || 999));
 
       if (qualities.length === 0) {
         throw new Error('未找到已完成的播放链接');
